@@ -1,0 +1,66 @@
+<!-- frontend/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Content Generation and Moderation</title>
+    <style>
+        /* Add some basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        input, textarea, button {
+            display: block;
+            margin: 10px 0;
+            padding: 10px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI Content Generation and Moderation</h1>
+    <div>
+        <h2>Generate Content</h2>
+        <input type="text" id="prompt" placeholder="Enter your prompt">
+        <button onclick="generateContent()">Generate</button>
+        <div id="generated-content"></div>
+    </div>
+
+    <div>
+        <h2>Moderate Content</h2>
+        <textarea id="content" placeholder="Enter content to moderate"></textarea>
+        <button onclick="moderateContent()">Moderate</button>
+        <div id="moderation-result"></div>
+    </div>
+
+    <script>
+        async function generateContent() {
+            const prompt = document.getElementById('prompt').value;
+            const response = await fetch('http://localhost:3000/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ prompt })
+            });
+            const data = await response.json();
+            document.getElementById('generated-content').innerText = data.content || data.error;
+        }
+
+        async function moderateContent() {
+            const content = document.getElementById('content').value;
+            const response = await fetch('http://localhost:3000/moderate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ content })
+            });
+            const data = await response.json();
+            document.getElementById('moderation-result').innerText = data.moderation_result?.label || data.error;
+        }
+    </script>
+</body>
+</html>
