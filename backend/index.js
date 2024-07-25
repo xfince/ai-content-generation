@@ -1,4 +1,6 @@
 // backend/index.js
+require('dotenv').config(); // Add this line at the top of your file
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
@@ -8,12 +10,15 @@ const port = 3000;
 
 app.use(bodyParser.json());
 
+// Access the API key from environment variables
+const apiKey = process.env.GEMINI_API_KEY;
+
 // Endpoint for generating content
 app.post('/generate', async (req, res) => {
   const { prompt } = req.body;
   try {
-    // Call your Python service to generate content
-    const response = await axios.post('http://localhost:5000/generate', { prompt });
+    // Pass the API key in the request to the Python service
+    const response = await axios.post('http://localhost:5000/generate', { prompt, apiKey });
     res.json(response.data);
   } catch (error) {
     res.status(500).json({ error: 'Content generation failed' });
@@ -24,8 +29,8 @@ app.post('/generate', async (req, res) => {
 app.post('/moderate', async (req, res) => {
   const { content } = req.body;
   try {
-    // Call your Python service to moderate content
-    const response = await axios.post('http://localhost:5000/moderate', { content });
+    // Pass the API key in the request to the Python service
+    const response = await axios.post('http://localhost:5000/moderate', { content, apiKey });
     res.json(response.data);
   } catch (error) {
     res.status(500).json({ error: 'Content moderation failed' });
